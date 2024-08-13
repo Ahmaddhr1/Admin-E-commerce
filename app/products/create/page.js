@@ -114,10 +114,6 @@ const CreateProduct = () => {
                   text={"Add"}
                   icon={"multiple"}
                   type={"submit"}
-                  onClick={() => {
-                    console.log(form);
-                    // Add logic to handle form submission here
-                  }}
                 />
               )
             }
