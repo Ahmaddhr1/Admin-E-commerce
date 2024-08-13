@@ -10,9 +10,9 @@ const page = () => {
     return renderLoader();
   }
 
-  return <div>{session ? <div>
-    
-  </div> : null}</div>;
+  return <div>
+    <h1 className="text-4xl h-cover">Dashboardddd</h1>
+    </div>;
 };
 
 export default page;

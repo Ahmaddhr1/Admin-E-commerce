@@ -22,16 +22,26 @@ const Navbar = () => {
     signOut({ callbackUrl: "/" });
   };
 
+  const closeNav = () => {
+    setTimeout(() => {
+      setIsNavOpen(false);
+    }, 300);
+  };
+
   return (
     <nav className="nav padding relative">
       <div className="overflow-hidden flex items-center">
         <Image src={Logo} alt="logo" width={135} className="rounded-md" />
       </div>
-      <div className="md:hidden flex" onClick={handleNavDisplay}>
+      <button
+        className="md:hidden flex"
+        onClick={handleNavDisplay}
+        onBlur={closeNav}
+      >
         <div className="flex items-center rotate-180 cursor-pointer">
           <i className="fi fi-rr-bars-sort text-2xl flex items-center"></i>
         </div>
-      </div>
+      </button>
       <div className="hidden md:flex">
         <div className="flex items-center justify-center gap-3">
           {navLinks.map((link, index) => (
@@ -58,7 +68,7 @@ const Navbar = () => {
         </div>
       </div>
       {isNavOpen && (
-        <div className="fixed top-full right-0 w-full h-fit 0 z-50">
+        <div className="fixed top-full right-0 w-full h-fit 0 z-99">
           <div className="flex flex-col items-center justify-center w-full h-full">
             {navLinks.map((link, index) => (
               <Link
@@ -67,7 +77,10 @@ const Navbar = () => {
                 className={`${
                   selectedLink === link.label ? "text-red" : "text-black"
                 } border-b w-full uppercase py-3 padding bg-white font-semibold duration-200`}
-                onClick={handleNavDisplay}
+                onClick={() => {
+                  setSelectedLink(link.label);
+                  handleNavDisplay();
+                }}
               >
                 {link.label}
               </Link>

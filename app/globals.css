@@ -15,17 +15,33 @@
   .padding {
     @apply md:px-10 px-5;
   }
+  /* Tailwind CSS Utilities for Navbar */
   .nav {
     @apply flex items-center justify-between py-2 w-full backdrop-blur-md;
+    position: fixed; /* Ensure the navbar stays fixed at the top */
+    top: 0; /* Align it to the top of the viewport */
+    left: 0; /* Align it to the left edge of the viewport */
+    z-index: 50; /* Ensure it's above other content */
+    background-color: #ffffff; /* Optional: add a background color for better visibility */
   }
+
   .h-cover {
-    @apply min-h-[calc(100vh-53px)];
+    @apply min-h-[calc(100vh-53px)] ;
   }
+  /* Add this to your CSS file */
   .btn-1 {
-    @apply w-full py-2 px-4 bg-red text-white flex items-center justify-center  cursor-pointer rounded-md font-semibold gap-3;
+    @apply w-full py-2 px-4 bg-red text-white flex items-center justify-center cursor-pointer rounded-md font-semibold gap-3;
+    @apply hover:opacity-75;
   }
+
   .btn-2 {
-    @apply w-full py-2 px-4 bg-transparent border border-red text-red flex items-center justify-center  cursor-pointer rounded-md font-semibold gap-3;
+    @apply w-full py-2 px-4 bg-transparent border border-red text-red flex items-center justify-center cursor-pointer rounded-md font-semibold gap-3;
+    @apply hover:opacity-75;
+  }
+
+  .btn-3 {
+    @apply w-full py-2 px-4 bg-gray-200 border border-gray-400 text-gray-800 flex items-center justify-center cursor-pointer rounded-md font-semibold gap-3;
+    @apply hover:opacity-75;
   }
 
   .loader {
@@ -45,5 +61,5 @@
     100% {
       transform: rotate(360deg);
     }
-  } 
+  }
 }

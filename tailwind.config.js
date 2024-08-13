@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+import { withUt } from "uploadthing/tw";
+
+const config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,15 +9,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-     colors:{
-      red:'#d90f0f'
-     },
-     fontFamily:{
-       poppins:['Poppins','sans-serif'],
-       outfit:['Outfit','sans-serif'],
-       poppins:['Poppins','sans-serif'],
-     }
+      colors: {
+        red: '#d90f0f',
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif'],
+      },
     },
   },
   plugins: [],
 };
+
+export default withUt(config);

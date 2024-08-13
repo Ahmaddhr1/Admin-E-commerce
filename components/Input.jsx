@@ -3,7 +3,7 @@
 import React from "react";
 const Input = ({ type, placeholder, onChange, icon="", value, name }) => {
   return (
-    <div className="flex border items-center rounded-md px-2 flex-1 relative">
+    <div className="flex border items-center rounded-md px-2 flex-1 relative z-1">
       <input
         value={value}
         type={type}
