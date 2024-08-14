@@ -38,7 +38,7 @@ const page = () => {
   }
 
   return (
-    <div className="h-cover padding py-4 pt-16">
+    <div className="h-cover padding py-4 navbar-pad">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-outfit font-semibold">All Products</h1>
         <Link href={"/products/create"} className="w-[170px]">
@@ -67,7 +67,7 @@ const page = () => {
                     src={
                       product.images[0]
                         ? product.images[0]
-                        : "https://images.app.goo.gl/pTicWNVdBch4gZGj9"
+                        : "https://via.placeholder.com/150?text=Image+Not+Found"
                     }
                     alt={product.name}
                     layout="fill"

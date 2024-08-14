@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import Button from "@components/Button";
-import Input from "@components/Input";
-import { UploadButton } from "@utils/uploadthing";
-import React, { useState } from "react";
-import {createProduct} from "@actions/products.actions"
-import { useProtectedRoute } from "@utils/protectedRoutes";
-import { CircleSpinner } from "react-spinners-kit";
+import React, { useState } from 'react';
+import Button from '@components/Button';
+import Input from '@components/Input';
+import { UploadButton } from '@utils/uploadthing';
+import { createProduct } from '@actions/products.actions';
+import { useProtectedRoute } from '@utils/protectedRoutes';
+import { CircleSpinner } from 'react-spinners-kit';
 
 const CreateProduct = () => {
   const { session, renderLoader } = useProtectedRoute();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   const [form, setForm] = useState({
-    name: "",
-    price: "",
-    quantity: "",
-    description: "",
+    name: '',
+    price: '',
+    quantity: '',
+    description: '',
     images: [],
   });
 
-  // Handle input change for text, number, and textarea fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -31,8 +31,8 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.price || !form.quantity || !form.images || !form.description) {
-      alert("All fields are required");
+    if (!form.name || !form.price || !form.quantity || !form.images || !form.description || !form.images.length) {
+      alert('All fields are required');
       return;
     }
     try {
@@ -44,11 +44,12 @@ const CreateProduct = () => {
         alert(result.response);
       }
       setIsLoading(false);
-    }catch(e) {
+    } catch (e) {
       alert(e.message);
+      setIsLoading(false);
     }
   };
-  
+
   if (!session) {
     return renderLoader();
   }
@@ -57,6 +58,11 @@ const CreateProduct = () => {
     <div className="h-cover padding py-4 z-1">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-outfit font-semibold">Add Product</h1>
+        {isLoading && (
+          <div className="flex justify-center items-center mt-4">
+            <CircleSpinner size={30} color="#198754" />
+          </div>
+        )}
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex md:flex-row flex-col gap-2 flex-wrap w-full">
             <Input
@@ -90,6 +96,7 @@ const CreateProduct = () => {
                     ...prevForm,
                     images: [...prevForm.images, ...imageUrls],
                   }));
+                 
                 }}
                 onUploadError={(error) => {
                   alert(`ERROR! ${error.message}`);
@@ -105,18 +112,23 @@ const CreateProduct = () => {
             onChange={handleChange}
           ></textarea>
           <div className="w-[160px]">
-            {
-              isLoading? (
-                <div className="flex items-center justify-center md:w-[100px] w-full"><CircleSpinner size={30} color="#d90f0f" /></div>
-              ) : (
-                <Button
-                  style={"btn-1"}
-                  text={"Add"}
-                  icon={"multiple"}
-                  type={"submit"}
-                />
-              )
-            }
+            {isLoading ? (
+              <div className="flex items-center justify-center md:w-[100px] w-full">
+                <CircleSpinner size={30} color="#d90f0f" />
+              </div>
+            ) : (
+              <Button
+                style="btn-1"
+                text="Add"
+                icon="multiple"
+                type="submit"
+                isLoading={isLoading}
+                disabled={
+                  !form.name || !form.price || !form.quantity || !form.images || !form.description || !form.images.length
+                }
+                
+              />
+            )}
           </div>
         </form>
       </div>

@@ -31,7 +31,7 @@ export async function fetchProducts() {
     await DbConnect();
 
     const products = await Product.find({}).lean();
-    return { response: products }; // Return plain objects
+    return { response: products };
   } catch (error) {
     return { message: "Error while fetching Products!" };
   }

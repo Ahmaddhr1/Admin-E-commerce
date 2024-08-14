@@ -11,7 +11,7 @@ const page = () => {
   }
 
   return <div>
-    <h1 className="text-4xl h-cover">Dashboardddd</h1>
+    <h1 className="text-4xl h-cover navbar-pad">Dashboardddd</h1>
     </div>;
 };
 
