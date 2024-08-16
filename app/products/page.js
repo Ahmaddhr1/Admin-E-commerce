@@ -8,15 +8,15 @@ import { deleteProductById, fetchProducts } from "@actions/products.actions";
 import Image from "next/image";
 import { CircleSpinner } from "react-spinners-kit";
 
-const page = () => {
+const Page = () => {
   const { session, renderLoader } = useProtectedRoute();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingProductIds, setDeletingProductIds] = useState({});
 
   useEffect(() => {
-    setIsLoading(true);
     const fetchData = async () => {
+      setIsLoading(true);
       const result = await fetchProducts();
       if (result.response) {
         setProducts(result.response.reverse());
@@ -51,15 +51,11 @@ const page = () => {
     <div className="h-cover padding py-4 navbar-pad">
       <div className="flex items-center justify-between mb-10">
         <h1 className="text-3xl font-outfit font-semibold">All Products</h1>
-        <Link href={"/products/create"} className="w-[170px]">
-          <Button
-            style={"btn-1"}
-            text={"Add Product"}
-            icon={"plus"}
-            type={"button"}
-          />
+        <Link href="/products/create" className="w-[170px]">
+          <Button style="btn-1" text="Add Product" icon="plus" type="button" />
         </Link>
       </div>
+
       {isLoading ? (
         <div className="h-cover flex items-center justify-center">
           <CircleSpinner size={40} color="#d90f0f" />
@@ -67,10 +63,10 @@ const page = () => {
       ) : (
         <div className="flex gap-3 flex-wrap h-cover">
           {products.length > 0 ? (
-            products.map((product, index) => (
+            products.map((product) => (
               <div
-                key={index}
-                className="flex flex-col p-2 w-full md:w-[210px] lg:w-[244px] min-h-[300px] overflow-hidden "
+                key={product._id}
+                className="flex flex-col p-2 w-full md:w-[210px] lg:w-[244px] min-h-[300px] overflow-hidden"
               >
                 <div className="relative w-full h-[250px]">
                   <Image
@@ -80,9 +76,8 @@ const page = () => {
                         : "https://via.placeholder.com/150?text=Image+Not+Found"
                     }
                     alt={product.name}
-                    layout="fill"
-                    priority="false"
-                    className="object-cover rounded-md w-auto"
+                    fill
+                    className="object-cover rounded-md"
                   />
                 </div>
                 <div className="mt-2">
@@ -93,24 +88,24 @@ const page = () => {
                   <div className="flex gap-2 mt-2 w-full">
                     <Link href={`/products/${product._id}`} className="w-1/2">
                       <Button
-                        text={"Edit"}
-                        type={"button"}
-                        style={"btn-3"}
-                        icon={"eye"}
+                        text="Edit"
+                        type="button"
+                        style="btn-3"
+                        icon="eye"
                       />
                     </Link>
                     <div className="w-1/2">
                       {deletingProductIds[product._id] ? (
-                        <div className="flex items-center w-full justify-center mt-2 ">
+                        <div className="flex items-center w-full justify-center mt-2">
                           <CircleSpinner size={25} color="#d90f0f" />
                         </div>
                       ) : (
                         <div onClick={() => handleDelete(product._id)}>
                           <Button
-                            text={"Delete"}
-                            type={"button"}
-                            style={"btn-2"}
-                            icon={"trash"}
+                            text="Delete"
+                            type="button"
+                            style="btn-2"
+                            icon="trash"
                           />
                         </div>
                       )}
@@ -120,9 +115,14 @@ const page = () => {
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center text-gray-800 w-full h-fit ">
+            <div className="flex flex-col items-center justify-center text-gray-800 w-full h-fit">
               <p className="text-lg">No products found.</p>
-              <Link href={'/products/create'} className="text-red underline cursor-pointer">Create one now!</Link>
+              <Link
+                href="/products/create"
+                className="text-red underline cursor-pointer"
+              >
+                Create one now!
+              </Link>
             </div>
           )}
         </div>
@@ -131,4 +131,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
