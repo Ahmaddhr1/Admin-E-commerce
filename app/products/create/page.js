@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import Button from '@components/Button';
@@ -7,12 +7,14 @@ import { UploadButton } from '@utils/uploadthing';
 import { createProduct } from '@actions/products.actions';
 import { useProtectedRoute } from '@utils/protectedRoutes';
 import { CircleSpinner } from 'react-spinners-kit';
+import { usePathname, useRouter } from 'next/navigation';
 
 const CreateProduct = () => {
   const { session, renderLoader } = useProtectedRoute();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname()
   
-
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -31,17 +33,18 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.price || !form.quantity || !form.images || !form.description || !form.images.length) {
+    if (!form.name || !form.price || !form.quantity || !form.images.length || !form.description) {
       alert('All fields are required');
       return;
     }
     try {
       setIsLoading(true);
       const result = await createProduct(form.name, form.price, form.description, form.images, form.quantity);
-      if (result.message) {
+      if (result.response) {
+        alert('Product created successfully!');
+        router.push('/products'); 
+      } else if (result.message) {
         alert(result.message);
-      } else {
-        alert(result.response);
       }
       setIsLoading(false);
     } catch (e) {
@@ -49,6 +52,9 @@ const CreateProduct = () => {
       setIsLoading(false);
     }
   };
+  const endpoint = pathname === '/categories/create' 
+  ? 'categoriesCreateUploader' 
+  : 'defaultUploader';
 
   if (!session) {
     return renderLoader();
@@ -63,6 +69,7 @@ const CreateProduct = () => {
             <CircleSpinner size={30} color="#198754" />
           </div>
         )}
+        <h1 className='text-3xl font-outfit font-semibold mt-4 mb-3'>Create Product</h1>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex md:flex-row flex-col gap-2 flex-wrap w-full">
             <Input
@@ -88,7 +95,7 @@ const CreateProduct = () => {
             />
             <div className="border rounded-md px-2 flex flex-1">
               <UploadButton
-                endpoint="imageUploader"
+                endpoint={endpoint}
                 className="mt-2 w-full ut-button:bg-red ut-button:ut-readying:bg-red-500/50 ut-button:ut-uploading:bg-red"
                 onClientUploadComplete={(res) => {
                   const imageUrls = res.map((file) => file.url);
@@ -96,7 +103,6 @@ const CreateProduct = () => {
                     ...prevForm,
                     images: [...prevForm.images, ...imageUrls],
                   }));
-                 
                 }}
                 onUploadError={(error) => {
                   alert(`ERROR! ${error.message}`);
@@ -122,11 +128,9 @@ const CreateProduct = () => {
                 text="Add"
                 icon="multiple"
                 type="submit"
-                isLoading={isLoading}
                 disabled={
-                  !form.name || !form.price || !form.quantity || !form.images || !form.description || !form.images.length
+                  !form.name || !form.price || !form.quantity || !form.images.length || !form.description
                 }
-                
               />
             )}
           </div>

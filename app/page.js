@@ -5,11 +5,13 @@ import Input from "@components/Input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { CircleSpinner } from "react-spinners-kit";
 
 export default function Home() {
   const [adminname, setAdminName] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,11 +21,13 @@ export default function Home() {
     }
 
     try {
-      const result = await signIn('credentials', {
+      setIsLoading(true);
+      const result = await signIn("credentials", {
         redirect: false,
         adminname,
         password,
       });
+      setIsLoading(false);
 
       if (result.ok) {
         router.push("/dashboard");
@@ -39,7 +43,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center h-cover w-full padding md:w-[450px] md:mx-auto">
+    <main className="flex flex-col items-center justify-center h-screen w-full padding md:w-[450px] md:mx-auto">
       <div className="flex flex-col items-center mb-4 w-full">
         <h1 className="text-2xl font-semibold">Hello There.!</h1>
         <p className="text-gray-600">Login using admin credentials!</p>
@@ -60,12 +64,18 @@ export default function Home() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="flex items-start md:w-[130px] w-full md:mx-auto">
-          <Button
-            style="btn-1"
-            text="Login"
-            icon="angle-small-right"
-            type="submit"
-          />
+          {isLoading ? (
+            <div className="flex items-center justify-center md:w-[120px] w-full mt-3">
+              <CircleSpinner size={30} color="#d90f0f" />
+            </div>
+          ) : (
+            <Button
+              style="btn-1"
+              text="Login"
+              icon="angle-small-right"
+              type="submit"
+            />
+          )}
         </div>
       </form>
     </main>

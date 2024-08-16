@@ -10,7 +10,7 @@ const Input = ({ type, placeholder, onChange, icon="", value, name }) => {
         placeholder={placeholder}
         className="md:w-[300px] w-full py-3 rounded-md outline-none "
         onChange={onChange}
-        step={`${name === "quantity" ? 1 : "any"}`}
+        step={`${name === "quantity"  ? 1 : "any"}`}
         name={name}
         min={"0"}
         onKeyDown={(e) =>

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useProtectedRoute } from "@utils/protectedRoutes.js";
 import Link from "next/link";
 import Button from "@components/Button";
-import { fetchProducts } from "@actions/products.actions";
+import { deleteProductById, fetchProducts } from "@actions/products.actions";
 import Image from "next/image";
 import { CircleSpinner } from "react-spinners-kit";
 
@@ -12,6 +12,7 @@ const page = () => {
   const { session, renderLoader } = useProtectedRoute();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletingProductIds, setDeletingProductIds] = useState({});
 
   useEffect(() => {
     setIsLoading(true);
@@ -27,19 +28,28 @@ const page = () => {
     fetchData();
   }, []);
 
-
   const handleDelete = async (id) => {
-     console.log(id);
-  }
+    setDeletingProductIds((prev) => ({ ...prev, [id]: true }));
+    const result = await deleteProductById(id);
+    setDeletingProductIds((prev) => ({ ...prev, [id]: false }));
 
-  
+    if (result.response) {
+      alert(result.response);
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product._id !== id)
+      );
+    } else {
+      alert(result.message);
+    }
+  };
+
   if (!session) {
     return renderLoader();
   }
 
   return (
     <div className="h-cover padding py-4 navbar-pad">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-10">
         <h1 className="text-3xl font-outfit font-semibold">All Products</h1>
         <Link href={"/products/create"} className="w-[170px]">
           <Button
@@ -55,12 +65,12 @@ const page = () => {
           <CircleSpinner size={40} color="#d90f0f" />
         </div>
       ) : (
-        <div className="flex gap-3 flex-wrap mt-10 h-cover">
+        <div className="flex gap-3 flex-wrap h-cover">
           {products.length > 0 ? (
             products.map((product, index) => (
               <div
                 key={index}
-                className="flex flex-col p-2 w-[200px] md:w-[210px] lg:w-[244px] min-h-[300px] overflow-hidden "
+                className="flex flex-col p-2 w-full md:w-[210px] lg:w-[244px] min-h-[300px] overflow-hidden "
               >
                 <div className="relative w-full h-[250px]">
                   <Image
@@ -71,14 +81,17 @@ const page = () => {
                     }
                     alt={product.name}
                     layout="fill"
-                    className="object-cover rounded-md"
+                    priority="false"
+                    className="object-cover rounded-md w-auto"
                   />
                 </div>
                 <div className="mt-2">
-                  <h3 className="text-xl font-semibold whitespace-normal">{product.name}</h3>
+                  <h3 className="text-xl font-semibold whitespace-normal">
+                    {product.name}
+                  </h3>
                   <p className="text-gray-800 text-lg">{product.price} $</p>
                   <div className="flex gap-2 mt-2 w-full">
-                    <Link href={`/products/${product._id}`} className="w-1/2" >
+                    <Link href={`/products/${product._id}`} className="w-1/2">
                       <Button
                         text={"Edit"}
                         type={"button"}
@@ -86,22 +99,31 @@ const page = () => {
                         icon={"eye"}
                       />
                     </Link>
-                    <div onClick={() => handleDelete(product._id)} className="w-1/2">
-                      <Button
-                        text={"Delete"}
-                        type={"button"}
-                        style={"btn-2"}
-                        icon={"trash"}
-                      />
+                    <div className="w-1/2">
+                      {deletingProductIds[product._id] ? (
+                        <div className="flex items-center w-full justify-center mt-2 ">
+                          <CircleSpinner size={25} color="#d90f0f" />
+                        </div>
+                      ) : (
+                        <div onClick={() => handleDelete(product._id)}>
+                          <Button
+                            text={"Delete"}
+                            type={"button"}
+                            style={"btn-2"}
+                            icon={"trash"}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <p className="flex items-center justify-center text-gray-800 w-full">
-              No products found.
-            </p>
+            <div className="flex flex-col items-center justify-center text-gray-800 w-full h-fit ">
+              <p className="text-lg">No products found.</p>
+              <Link href={'/products/create'} className="text-red underline cursor-pointer">Create one now!</Link>
+            </div>
           )}
         </div>
       )}

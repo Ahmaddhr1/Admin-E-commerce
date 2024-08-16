@@ -1,25 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "@images/logo.JPG";
 import { navLinks } from "@utils/navLinks";
 import Link from "next/link";
 import Button from "@components/Button";
 import { signOut } from "next-auth/react";
+import { CircleSpinner } from "react-spinners-kit";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
-  const [selectedLink, setSelectedLink] = useState("Dashboard");
   const [isNavOpen, setIsNavOpen] = useState(false);
-
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const pathname = usePathname();
+  
   const handleNavDisplay = () => {
     setIsNavOpen(!isNavOpen);
-    console.log(isNavOpen);
   };
 
   const handleLogout = (e) => {
+    setIsLoggingOut(true);
     e.preventDefault();
     signOut({ callbackUrl: "/" });
+    setIsLoggingOut(false);
   };
 
   const closeNav = () => {
@@ -31,7 +35,7 @@ const Navbar = () => {
   return (
     <nav className="nav padding relative">
       <div className="overflow-hidden flex items-center">
-        <Image src={Logo} alt="logo" width={135} className="rounded-md" />
+        <Image src={Logo} alt="logo" width={135} layout="" className="rounded-md h-auto" />
       </div>
       <button
         className="md:hidden flex"
@@ -49,38 +53,40 @@ const Navbar = () => {
               href={link.href}
               key={index}
               className={`${
-                selectedLink === link.label ? "text-red" : "text-black"
+                pathname === link.href ? "text-red" : "text-black"
               }`}
-              onClick={(e) => {
-                setSelectedLink(link.label);
-              }}
             >
               {link.label}
             </Link>
           ))}
-          <Button
-            style="btn-2"
-            text={"Logout"}
-            icon={"exit"}
-            type={"button"}
-            onclick={handleLogout}
-          />
+          <div>
+            {isLoggingOut ? (
+              <div className="flex items-center gap-3 justify-center ml-5">
+                <CircleSpinner size={20} color="#d90f0f" />
+              </div>
+            ) : (
+              <Button
+                style="btn-2"
+                text={"Logout"}
+                icon={"exit"}
+                type={"button"}
+                onclick={handleLogout}
+              />
+            )}
+          </div>
         </div>
       </div>
       {isNavOpen && (
-        <div className="fixed top-full right-0 w-full h-fit 0 z-99">
+        <div className="fixed top-full right-0 w-full h-fit z-99">
           <div className="flex flex-col items-center justify-center w-full h-full">
             {navLinks.map((link, index) => (
               <Link
                 href={link.href}
                 key={index}
                 className={`${
-                  selectedLink === link.label ? "text-red" : "text-black"
+                  pathname === link.href ? "text-red" : "text-black"
                 } border-b w-full uppercase py-3 padding bg-white font-semibold duration-200`}
-                onClick={() => {
-                  setSelectedLink(link.label);
-                  handleNavDisplay();
-                }}
+                onClick={handleNavDisplay}
               >
                 {link.label}
               </Link>
