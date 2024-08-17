@@ -15,17 +15,20 @@ const page = () => {
     name: "",
     image: "",
   });
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await createCategory(form.name ,form.image);
+    const result = await createCategory(form.name, form.image);
     if (result.response) {
       alert("Category created successfully!");
-      router.push('/categories');
-    }else {
+      router.push("/categories");
+    } else {
       alert(result.message);
     }
   };
+
+  
 
   const endpoint =
     pathname === "/categories/create"
@@ -34,7 +37,9 @@ const page = () => {
 
   return (
     <div className="h-cover padding navbar-pad">
-      <h1 className="text-3xl font-outfit font-semibold mb-4">Create Category</h1>
+      <h1 className="text-3xl font-outfit font-semibold mb-4">
+        Create Category
+      </h1>
       <form className="flex gap-2 md:flex-row flex-col">
         <div className="md:w-[400px] w-full">
           <Input
@@ -62,17 +67,17 @@ const page = () => {
             }}
           />
         </div>
-        <div className="flex justify-end mt-4 md:mt-0"></div>
+        
       </form>
       <div className="mt-3 md:w-[200px]">
-      <Button
-        type={"submit"}
-        style={"btn-1"}
-        icon={"plus"}
-        onclick={handleSubmit}
-        text={"Create"}
-        disabled={!form.name ||!form.image}
-      />
+        <Button
+          type={"submit"}
+          style={"btn-1"}
+          icon={"plus"}
+          onclick={handleSubmit}
+          text={"Create"}
+          disabled={!form.name || !form.image}
+        />
       </div>
     </div>
   );

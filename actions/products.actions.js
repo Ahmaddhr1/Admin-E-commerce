@@ -1,5 +1,6 @@
 "use server";
 
+import { Category } from "@models/Category";
 import { Product } from "@models/Product";
 import { DbConnect } from "@utils/dbConnect";
 
@@ -8,7 +9,8 @@ export async function createProduct(
   price,
   description,
   images,
-  quantity
+  quantity,
+  category
 ) {
   await DbConnect();
 
@@ -18,7 +20,14 @@ export async function createProduct(
     description,
     images,
     quantity,
+    category
   });
+
+  const categoryM = await Category.findById(category);
+  if (categoryM) {
+    categoryM?.products?.push(newProduct._id);
+    await categoryM.save();
+  }
 
   return newProduct
     .save()
@@ -40,6 +49,18 @@ export async function fetchProducts() {
 export async function deleteProductById(id) {
   await DbConnect();
   try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return { message: "Product not found" };
+    }
+
+    const category = await Category.findById(product.category);
+    if (category) {
+      category.products = category.products.filter(
+        (productId) => !productId.equals(product._id)
+      );
+      await category.save();
+    }
     await Product.findByIdAndDelete(id);
     return { response: "Product deleted successfully" };
   } catch (error) {
@@ -52,7 +73,7 @@ export async function updateProduct(id, updates) {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true }).lean();
     if(!updatedProduct) {
-      return { message: "Product not found" };
+      return { message: "Product not found"};
     }
     return { response: "Product updated sucessfully" };
   } catch (error) {

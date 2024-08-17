@@ -1,27 +1,30 @@
 "use client";
 
-import React, { useState } from 'react';
-import Button from '@components/Button';
-import Input from '@components/Input';
-import { UploadButton } from '@utils/uploadthing';
-import { createProduct } from '@actions/products.actions';
-import { useProtectedRoute } from '@utils/protectedRoutes';
-import { CircleSpinner } from 'react-spinners-kit';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import Button from "@components/Button";
+import Input from "@components/Input";
+import { UploadButton } from "@utils/uploadthing";
+import { createProduct } from "@actions/products.actions";
+import { useProtectedRoute } from "@utils/protectedRoutes";
+import { CircleSpinner } from "react-spinners-kit";
+import { usePathname, useRouter } from "next/navigation";
+import { getAllCategories } from "@actions/categories.actions";
 
 const CreateProduct = () => {
   const { session, renderLoader } = useProtectedRoute();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const pathname = usePathname()
-  
+  const pathname = usePathname();
+
   const [form, setForm] = useState({
-    name: '',
-    price: '',
-    quantity: '',
-    description: '',
+    name: "",
+    price: null,
+    quantity: null,
+    description: "",
     images: [],
+    categoryId: "",
   });
+  const [categories, setCategories] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,16 +36,30 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.price || !form.quantity || !form.images.length || !form.description) {
-      alert('All fields are required');
+    if (
+      !form.name ||
+      !form.price ||
+      !form.quantity ||
+      !form.images.length ||
+      !form.description ||
+      form.categoryId === ""
+    ) {
+      alert("All fields are required");
       return;
     }
     try {
       setIsLoading(true);
-      const result = await createProduct(form.name, form.price, form.description, form.images, form.quantity);
+      const result = await createProduct(
+        form.name,
+        form.price,
+        form.description,
+        form.images,
+        form.quantity,
+        form.categoryId
+      );
       if (result.response) {
-        alert('Product created successfully!');
-        router.push('/products'); 
+        alert("Product created successfully!");
+        router.push("/products");
       } else if (result.message) {
         alert(result.message);
       }
@@ -52,9 +69,23 @@ const CreateProduct = () => {
       setIsLoading(false);
     }
   };
-  const endpoint = pathname === '/categories/create' 
-  ? 'categoriesCreateUploader' 
-  : 'defaultUploader';
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const result = await getAllCategories();
+      if (result.message) {
+        alert(result.message);
+      } else {
+        setCategories(result.response);
+      }
+    };
+    fetchCategories();
+  }, []);
+  console.log(form);
+
+  const endpoint =
+    pathname === "/categories/create"
+      ? "categoriesCreateUploader"
+      : "defaultUploader";
 
   if (!session) {
     return renderLoader();
@@ -69,7 +100,9 @@ const CreateProduct = () => {
             <CircleSpinner size={30} color="#198754" />
           </div>
         )}
-        <h1 className='text-3xl font-outfit font-semibold mt-4 mb-3'>Create Product</h1>
+        <h1 className="text-3xl font-outfit font-semibold mt-4 mb-3">
+          Create Product
+        </h1>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex md:flex-row flex-col gap-2 flex-wrap w-full">
             <Input
@@ -117,6 +150,26 @@ const CreateProduct = () => {
             value={form.description}
             onChange={handleChange}
           ></textarea>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl">Select category</h1>
+            <select
+              className="w-[200px] border"
+              name="categoryId"
+              value={form.categoryId}
+              onChange={handleChange}
+            >
+              <option value="" disabled>Select Category</option>
+              {categories.map((category) => (
+                <option
+                  key={category._id}
+                  value={category._id}
+                  onClick={handleChange}
+                >
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="w-[160px]">
             {isLoading ? (
               <div className="flex items-center justify-center md:w-[100px] w-full">
@@ -129,7 +182,11 @@ const CreateProduct = () => {
                 icon="multiple"
                 type="submit"
                 disabled={
-                  !form.name || !form.price || !form.quantity || !form.images.length || !form.description
+                  !form.name ||
+                  !form.price ||
+                  !form.quantity ||
+                  !form.images.length ||
+                  !form.description
                 }
               />
             )}

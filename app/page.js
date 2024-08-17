@@ -31,7 +31,6 @@ export default function Home() {
 
       if (result.ok) {
         router.push("/dashboard");
-        console.log("result");
       } else {
         console.error(result.error);
         alert("Invalid credentials!");

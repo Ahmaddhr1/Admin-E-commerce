@@ -61,14 +61,14 @@ const Page = () => {
           <CircleSpinner size={40} color="#d90f0f" />
         </div>
       ) : (
-        <div className="flex gap-3 flex-wrap h-cover">
+        <div className="flex gap-2 flex-wrap w-full">
           {products.length > 0 ? (
             products.map((product) => (
               <div
                 key={product._id}
-                className="flex flex-col p-2 w-full md:w-[210px] lg:w-[244px] min-h-[300px] overflow-hidden"
+                className="w-full md:w-[210px] lg:w-[244px] min-h-[400px] flex flex-col gap-3"
               >
-                <div className="relative w-full h-[250px]">
+                <div className="relative w-full h-[200px]">
                   <Image
                     src={
                       product.images[0]
@@ -77,39 +77,39 @@ const Page = () => {
                     }
                     alt={product.name}
                     fill
-                    className="object-cover rounded-md"
+                    className="md:object-cover object-contain rounded-md"
                   />
                 </div>
-                <div className="mt-2">
-                  <h3 className="text-xl font-semibold whitespace-normal">
+                <div className="flex gap-1 flex-col">
+                  <h3 className="text-2xl font-outfit font-semibold whitespace-normal">
                     {product.name}
                   </h3>
                   <p className="text-gray-800 text-lg">{product.price} $</p>
-                  <div className="flex gap-2 mt-2 w-full">
-                    <Link href={`/products/${product._id}`} className="w-1/2">
-                      <Button
-                        text="Edit"
-                        type="button"
-                        style="btn-3"
-                        icon="eye"
-                      />
-                    </Link>
-                    <div className="w-1/2">
-                      {deletingProductIds[product._id] ? (
-                        <div className="flex items-center w-full justify-center mt-2">
-                          <CircleSpinner size={25} color="#d90f0f" />
-                        </div>
-                      ) : (
-                        <div onClick={() => handleDelete(product._id)}>
-                          <Button
-                            text="Delete"
-                            type="button"
-                            style="btn-2"
-                            icon="trash"
-                          />
-                        </div>
-                      )}
-                    </div>
+                </div>
+                <div className="flex gap-2 flex-col md:flex-row">
+                  <Link href={`/products/${product._id}`} className="md:w-1/2 w-full">
+                    <Button
+                      text="Edit"
+                      type="button"
+                      style="btn-3"
+                      icon="eye"
+                    />
+                  </Link>
+                  <div className="md:w-1/2 w-full">
+                    {deletingProductIds[product._id] ? (
+                      <div className="flex items-center w-full justify-center mt-2">
+                        <CircleSpinner size={25} color="#d90f0f" />
+                      </div>
+                    ) : (
+                      <div onClick={() => handleDelete(product._id)}>
+                        <Button
+                          text="Delete"
+                          type="button"
+                          style="btn-2"
+                          icon="trash"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
