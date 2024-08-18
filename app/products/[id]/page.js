@@ -4,6 +4,7 @@ import { fetchSingleProduct, updateProduct } from "@actions/products.actions";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import { useProtectedRoute } from "@utils/protectedRoutes";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CircleSpinner } from "react-spinners-kit";
@@ -81,13 +82,14 @@ const Page = ({ params }) => {
     );
 
   return (
-    <div className="h-cover navbar-pad padding w-full">
+    <div className="h-cover navbar-pad padding w-full mb-5">
       <h1 className="text-3xl font-outfit font-semibold mb-3">
         Product Details
       </h1>
+      <h1 className="text-red font-medium my-3 w-fit">This product is linked to <Link href={`/categories/${product?.category._id}`} className="underline font-semibold">{product?.category.name}</Link> category.</h1>
       <div className="flex flex-wrap gap-4 w-full">
         <form
-          className="w-full md:w-[620px] flex flex-col gap-5"
+          className="w-full md:w-[600px] flex flex-col gap-5"
           onSubmit={handleSubmit}
         >
           <div>

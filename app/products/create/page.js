@@ -42,7 +42,7 @@ const CreateProduct = () => {
       !form.quantity ||
       !form.images.length ||
       !form.description ||
-      form.categoryId === ""
+      !form.categoryId
     ) {
       alert("All fields are required");
       return;
@@ -83,7 +83,7 @@ const CreateProduct = () => {
   console.log(form);
 
   const endpoint =
-    pathname === "/categories/create"
+    pathname === "/categories/*"
       ? "categoriesCreateUploader"
       : "defaultUploader";
 
@@ -186,7 +186,8 @@ const CreateProduct = () => {
                   !form.price ||
                   !form.quantity ||
                   !form.images.length ||
-                  !form.description
+                  !form.description ||
+                  !form.categoryId
                 }
               />
             )}

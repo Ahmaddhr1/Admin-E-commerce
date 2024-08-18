@@ -20,7 +20,7 @@ export async function createProduct(
     description,
     images,
     quantity,
-    category
+    category,
   });
 
   const categoryM = await Category.findById(category);
@@ -71,9 +71,11 @@ export async function deleteProductById(id) {
 export async function updateProduct(id, updates) {
   await DbConnect();
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true }).lean();
-    if(!updatedProduct) {
-      return { message: "Product not found"};
+    const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
+      new: true,
+    }).lean();
+    if (!updatedProduct) {
+      return { message: "Product not found" };
     }
     return { response: "Product updated sucessfully" };
   } catch (error) {
@@ -84,14 +86,14 @@ export async function updateProduct(id, updates) {
 export async function fetchSingleProduct(id) {
   try {
     await DbConnect();
-    const product = await Product.findById(id).lean();
-    if(!product) {
+    const product = await Product.findById(id)
+      .populate("category", "name")
+      .lean();
+    if (!product) {
       return { message: "Product not found" };
     }
     return { response: product };
-  }catch(e) {
+  } catch (e) {
     return { message: "Error while fetching product" };
   }
- 
-
 }

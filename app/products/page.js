@@ -89,7 +89,7 @@ const Page = () => {
                 <div className="flex gap-2 flex-col md:flex-row">
                   <Link href={`/products/${product._id}`} className="md:w-1/2 w-full">
                     <Button
-                      text="Edit"
+                      text="View"
                       type="button"
                       style="btn-3"
                       icon="eye"
