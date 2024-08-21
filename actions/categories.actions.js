@@ -29,24 +29,25 @@ export async function getAllCategories() {
 
 export async function deleteCategoryById(id) {
   await DbConnect();
+
   try {
-    const category = await Category.findByIdAndDelete(id);
+    const category = await Category.findById(id);
     if (!category) {
       return { message: "Category not found" };
     }
+
+    // Delete all products linked to the category
     if (category.products.length > 0) {
-      category.products.map((product) => {
-        Product.findByIdAndUpdate(
-          product,
-          { $pull: { categories: id } },
-          { new: true }
-        ).exec();
-      });
+      await Product.deleteMany({ _id: { $in: category.products } });
     }
 
-    return { response: "Category deleted successfully" };
+    // Delete the category
+    await Category.deleteOne({ _id: id });
+
+    return { response: "Category and associated products deleted successfully" };
   } catch (error) {
-    return { message: "Error while deleting category" + error };
+    console.error("Error while deleting category:", error); // For debugging purposes
+    return { message: "Error while deleting category: " + error.message };
   }
 }
 

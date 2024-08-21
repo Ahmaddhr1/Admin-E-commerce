@@ -1,6 +1,6 @@
 "use client";
 
-import { getSingleCategory, updateCategory } from "@actions/categories.actions";
+import { deleteCategoryById, getSingleCategory, updateCategory } from "@actions/categories.actions";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { CircleSpinner } from "react-spinners-kit";
@@ -69,6 +69,8 @@ const Page = ({ params }) => {
       alert(result.message);
     }
   };
+
+
 
   return (
     <section className="min-h-screen navbar-pad p-6">
