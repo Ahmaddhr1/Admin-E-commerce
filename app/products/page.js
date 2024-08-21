@@ -11,15 +11,19 @@ import { CircleSpinner } from "react-spinners-kit";
 const Page = () => {
   const { session, renderLoader } = useProtectedRoute();
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingProductIds, setDeletingProductIds] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const result = await fetchProducts();
       if (result.response) {
-        setProducts(result.response.reverse());
+        const reversedProducts = result.response.reverse();
+        setProducts(reversedProducts);
+        setFilteredProducts(reversedProducts);
       } else {
         alert(result.message);
       }
@@ -38,9 +42,21 @@ const Page = () => {
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== id)
       );
+      setFilteredProducts((prevProducts) =>
+        prevProducts.filter((product) => product._id !== id)
+      );
     } else {
       alert(result.message);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(query)
+    );
+    setFilteredProducts(filtered);
   };
 
   if (!session) {
@@ -56,14 +72,28 @@ const Page = () => {
         </Link>
       </div>
 
+      <div className="mb-6 font-medium flex items-center justify-between flex-wrap gap-2">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search products..."
+          className="border rounded-md px-4 py-2 w-full md:w-[300px]"
+        />
+        <p className="text-gray-600">
+          Showing {filteredProducts.length}{" "}
+          {filteredProducts.length === 1 ? "product" : "products"}
+        </p>
+      </div>
+
       {isLoading ? (
         <div className="h-cover flex items-center justify-center">
           <CircleSpinner size={40} color="#d90f0f" />
         </div>
       ) : (
         <div className="flex gap-2 flex-wrap w-full">
-          {products.length > 0 ? (
-            products.map((product) => (
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
               <div
                 key={product._id}
                 className="w-full md:w-[210px] lg:w-[244px] min-h-[400px] flex flex-col gap-3"
@@ -87,7 +117,10 @@ const Page = () => {
                   <p className="text-gray-800 text-lg">{product.price} $</p>
                 </div>
                 <div className="flex gap-2 flex-col md:flex-row">
-                  <Link href={`/products/${product._id}`} className="md:w-1/2 w-full">
+                  <Link
+                    href={`/products/${product._id}`}
+                    className="md:w-1/2 w-full"
+                  >
                     <Button
                       text="View"
                       type="button"

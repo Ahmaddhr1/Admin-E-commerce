@@ -63,4 +63,21 @@ export async function getSingleCategory(id) {
   }
 }
 
+export async function updateCategory(id,updates) {
+  await DbConnect();
+  try {
+    const category = await Category.findByIdAndUpdate(id , updates);
+    if (!category) {
+      return { message: "Category not found" };
+    }
+    return {
+      response: "Category updated successfully"
+    }
+  } catch (e) {
+    return {
+      message: "Error while updating category"
+    }
+  }
+}
+
 

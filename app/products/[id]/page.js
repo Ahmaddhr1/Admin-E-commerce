@@ -17,7 +17,6 @@ const Page = ({ params }) => {
   const [product, setProduct] = useState(null);
   const [isUpdatingLoading, setIsUpdatingLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -64,10 +63,8 @@ const Page = ({ params }) => {
     if (result.response) {
       router.back();
       alert(result.response);
-      setIsUpdatingLoading(false);
-    } else {
-      setIsUpdatingLoading(false);
     }
+    setIsUpdatingLoading(false);
   };
 
   if (!session) {
@@ -82,11 +79,18 @@ const Page = ({ params }) => {
     );
 
   return (
-    <div className="h-cover navbar-pad padding w-full mb-5">
-      <h1 className="text-3xl font-outfit font-semibold mb-3">
-        Product Details
-      </h1>
-      <h1 className="text-red font-medium my-3 w-fit">This product is linked to <Link href={`/categories/${product?.category._id}`} className="underline font-semibold">{product?.category.name}</Link> category.</h1>
+    <section className="h-cover navbar-pad padding w-full mb-5">
+      <h1 className="text-3xl font-semibold mb-3">Product Details</h1>
+      <p className="text-red font-medium my-3">
+        This product is linked to{" "}
+        <Link
+          href={`/categories/${product?.category._id}`}
+          className="underline font-semibold"
+        >
+          {product?.category.name}
+        </Link>{" "}
+        category.
+      </p>
       <div className="flex flex-wrap gap-4 w-full">
         <form
           className="w-full md:w-[600px] flex flex-col gap-5"
@@ -127,11 +131,11 @@ const Page = ({ params }) => {
               placeholder="Description"
               value={form.description}
               onChange={handleChange}
-            ></textarea>
+            />
           </div>
           <div className="w-[160px]">
             {isUpdatingLoading ? (
-              <div className="flex items-center justify-center md:w-[100px] w-full">
+              <div className="flex items-center justify-center w-full">
                 <CircleSpinner size={30} color="#d90f0f" />
               </div>
             ) : (
@@ -160,7 +164,6 @@ const Page = ({ params }) => {
               />
             )}
           </div>
-
           <div className="flex mt-4 gap-2 overflow-x-auto">
             {product?.images?.map((image, index) => (
               <img
@@ -176,7 +179,7 @@ const Page = ({ params }) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
